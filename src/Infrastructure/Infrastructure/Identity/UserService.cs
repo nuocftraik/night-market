@@ -163,13 +163,7 @@ internal partial class UserService : IUserService
 
     #endregion
     
-    // Placeholder implementations for Role and Permission Operations
-
-    public Task<List<string>> GetPermissionsAsync(string userId, CancellationToken cancellationToken)
-        => throw new NotImplementedException();
-
-    public Task<bool> HasPermissionAsync(string userId, string permission, CancellationToken cancellationToken = default)
-        => throw new NotImplementedException();
+    // Placeholder implementations for remaining operations
         
     public Task<string> ForgotPasswordAsync(ForgotPasswordRequest request, string origin)
         => throw new NotImplementedException();

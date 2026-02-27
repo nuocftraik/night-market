@@ -1,5 +1,6 @@
 using NightMarket.WebApi.Application.Common.Exceptions;
 using NightMarket.WebApi.Application.Identity.Tokens;
+using NightMarket.WebApi.Application.Identity.Users;
 using NightMarket.WebApi.Domain.Identity;
 using NightMarket.WebApi.Infrastructure.Auth;
 using NightMarket.WebApi.Infrastructure.Auth.Jwt;
@@ -20,15 +21,18 @@ namespace NightMarket.WebApi.Infrastructure.Identity;
 internal class TokenService : ITokenService
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IUserService _userService;
     private readonly SecuritySettings _securitySettings;
     private readonly JwtSettings _jwtSettings;
 
     public TokenService(
         UserManager<ApplicationUser> userManager,
+        IUserService userService,
         IOptions<JwtSettings> jwtSettings,
         IOptions<SecuritySettings> securitySettings)
     {
         _userManager = userManager;
+        _userService = userService;
         _jwtSettings = jwtSettings.Value;
         _securitySettings = securitySettings.Value;
     }
@@ -100,7 +104,7 @@ internal class TokenService : ITokenService
         string ipAddress)
     {
         // Generate JWT access token
-        string token = GenerateJwt(user, ipAddress);
+        string token = await GenerateJwtAsync(user, ipAddress);
 
         // Generate refresh token (cryptographically random)
         user.RefreshToken = GenerateRefreshToken();
@@ -118,14 +122,18 @@ internal class TokenService : ITokenService
     /// <summary>
     /// Generate JWT access token
     /// </summary>
-    private string GenerateJwt(ApplicationUser user, string ipAddress) =>
-        GenerateEncryptedToken(GetSigningCredentials(), GetClaims(user, ipAddress));
+    private async Task<string> GenerateJwtAsync(ApplicationUser user, string ipAddress)
+    {
+        var claims = await GetClaimsAsync(user, ipAddress);
+        return GenerateEncryptedToken(GetSigningCredentials(), claims);
+    }
 
     /// <summary>
     /// Build user claims cho JWT
     /// </summary>
-    private IEnumerable<Claim> GetClaims(ApplicationUser user, string ipAddress) =>
-        new List<Claim>
+    private async Task<IEnumerable<Claim>> GetClaimsAsync(ApplicationUser user, string ipAddress)
+    {
+        var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id),
             new(ClaimTypes.Email, user.Email!),
@@ -136,6 +144,15 @@ internal class TokenService : ITokenService
             new(AppClaims.ImageUrl, user.ImageUrl ?? string.Empty),
             new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty)
         };
+
+        var permissions = await _userService.GetPermissionsAsync(user.Id, CancellationToken.None);
+        foreach (var permission in permissions)
+        {
+            claims.Add(new Claim(AppClaims.Permission, $"Permissions.{permission}"));
+        }
+
+        return claims;
+    }
 
     /// <summary>
     /// Generate cryptographically secure refresh token

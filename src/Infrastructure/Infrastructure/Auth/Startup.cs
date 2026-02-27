@@ -1,5 +1,6 @@
 using NightMarket.WebApi.Application.Common.Interfaces;
 using NightMarket.WebApi.Infrastructure.Auth.Jwt;
+using NightMarket.WebApi.Infrastructure.Auth.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,11 +16,17 @@ internal static class Startup
     {
         services
             .AddCurrentUser()
+            .AddPermissions()
             // JWT Authentication
             .AddJwtAuth();
             
         return services;
     }
+
+    private static IServiceCollection AddPermissions(this IServiceCollection services) =>
+        services
+            .AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
+            .AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
     internal static IApplicationBuilder UseAuth(this IApplicationBuilder app)
     {
