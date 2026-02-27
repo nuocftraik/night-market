@@ -1,3 +1,5 @@
+using NightMarket.WebApi.Application.Auditing;
+using NightMarket.WebApi.Application.Common.Models;
 using NightMarket.WebApi.Application.Identity.Users;
 using NightMarket.WebApi.Application.Identity.Users.Password;
 using Microsoft.AspNetCore.Mvc;
@@ -7,19 +9,23 @@ namespace NightMarket.WebApi.Host.Controllers.Personal;
 
 /// <summary>
 /// Personal Controller - Current user profile management
-/// Endpoints: Profile, Change password, Get permissions
+/// Endpoints: Profile, Change password, Get permissions, Audit logs
 /// </summary>
 public class PersonalController : BaseApiController
 {
     private readonly IUserService _userService;
+    private readonly IAuditService _auditService;
 
-    public PersonalController(IUserService userService)
+    public PersonalController(
+        IUserService userService,
+        IAuditService auditService)
     {
         _userService = userService;
+        _auditService = auditService;
     }
 
     /// <summary>
-    /// Lấy profile của current logged-in user
+    /// Lấy profile của current logged-in user.
     /// </summary>
     [HttpGet("profile")]
     public async Task<ActionResult<UserDetailDto>> GetProfileAsync(
@@ -37,7 +43,7 @@ public class PersonalController : BaseApiController
     }
 
     /// <summary>
-    /// Cập nhật profile của current logged-in user
+    /// Cập nhật profile của current logged-in user.
     /// </summary>
     [HttpPut("profile")]
     public async Task<ActionResult> UpdateProfileAsync(UpdateUserRequest request)
@@ -54,7 +60,7 @@ public class PersonalController : BaseApiController
     }
 
     /// <summary>
-    /// Đổi password của current logged-in user
+    /// Đổi password của current logged-in user.
     /// </summary>
     [HttpPut("change-password")]
     public async Task<ActionResult> ChangePasswordAsync(ChangePasswordRequest model)
@@ -71,7 +77,7 @@ public class PersonalController : BaseApiController
     }
 
     /// <summary>
-    /// Lấy danh sách permissions của current logged-in user
+    /// Lấy danh sách permissions của current logged-in user.
     /// </summary>
     [HttpGet("permissions")]
     public async Task<ActionResult<List<string>>> GetPermissionsAsync(
@@ -86,5 +92,17 @@ public class PersonalController : BaseApiController
 
         var permissions = await _userService.GetPermissionsAsync(userId, cancellationToken);
         return Ok(permissions);
+    }
+
+    /// <summary>
+    /// Lấy audit logs của current logged-in user.
+    /// </summary>
+    [HttpGet("logs")]
+    public async Task<ActionResult<PaginationResponse<AuditDto>>> GetMyAuditLogsAsync(
+        [FromQuery] GetMyAuditLogsRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await _auditService.GetMyAuditLogsAsync(request, cancellationToken);
+        return Ok(result);
     }
 }

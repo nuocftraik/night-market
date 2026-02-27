@@ -9,8 +9,9 @@ public class ApplicationDbContext : BaseDbContext
 {
     public ApplicationDbContext(
         DbContextOptions<ApplicationDbContext> options,
-        ICurrentUser currentUser)
-        : base(options, currentUser)
+        ICurrentUser currentUser,
+        ISerializerService serializer)
+        : base(options, currentUser, serializer)
     {
     }
 
@@ -19,6 +20,4 @@ public class ApplicationDbContext : BaseDbContext
     public DbSet<Function> Functions => Set<Function>();
     public DbSet<Action> Actions => Set<Action>();
     public DbSet<ActionInFunction> ActionInFunctions => Set<ActionInFunction>();
-
-    // Các DbSets khác sẽ được thêm khi implement features
 }

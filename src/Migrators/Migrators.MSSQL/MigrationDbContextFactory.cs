@@ -11,7 +11,6 @@ public class MigrationDbContextFactory : IDesignTimeDbContextFactory<Application
 {
     public ApplicationDbContext CreateDbContext(string[] args)
     {
-        // Load configuration từ Host project
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../../Host/Host"))
             .AddJsonFile("Configurations/database.json", optional: false)
@@ -19,19 +18,18 @@ public class MigrationDbContextFactory : IDesignTimeDbContextFactory<Application
 
         var connectionString = configuration.GetSection("DatabaseSettings:ConnectionString").Value;
 
-        // Create DbContext options
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseSqlServer(
             connectionString,
             x => x.MigrationsAssembly("Migrators.MSSQL"));
 
-        return new ApplicationDbContext(optionsBuilder.Options, new DesignTimeCurrentUser());
+        return new ApplicationDbContext(
+            optionsBuilder.Options,
+            new DesignTimeCurrentUser(),
+            new DesignTimeSerializer());
     }
 }
 
-/// <summary>
-/// Stub ICurrentUser for design-time migrations (no real user context available).
-/// </summary>
 internal class DesignTimeCurrentUser : ICurrentUser
 {
     public string? Name => null;
@@ -41,3 +39,11 @@ internal class DesignTimeCurrentUser : ICurrentUser
     public bool IsInRole(string role) => false;
     public IEnumerable<Claim>? GetUserClaims() => null;
 }
+
+internal class DesignTimeSerializer : ISerializerService
+{
+    public string Serialize<T>(T obj) => System.Text.Json.JsonSerializer.Serialize(obj);
+    public string Serialize<T>(T obj, Type type) => System.Text.Json.JsonSerializer.Serialize(obj, type);
+    public T Deserialize<T>(string json) => System.Text.Json.JsonSerializer.Deserialize<T>(json)!;
+}
+
