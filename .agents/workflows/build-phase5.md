@@ -68,5 +68,6 @@ Expect: Changes tracked trong Trails table khi CRUD entities
 - [ ] Soft delete: entity không bị xóa thật, `DeletedOn` được set
 - [ ] Audit trail: `Trails` table ghi nhận Create/Update/Delete
 - [ ] `PersonalController` expose audit logs
+- [ ] Thực hiện chỉnh sửa docs sau khi đã hoàn thiện phase này cho phù hợp (cập nhật docs nếu trong quá trình implement có thay đổi/tối ưu so với docs gốc).
 
 **⏸️ DỪNG: Notify user review Phase 5 trước khi tiếp tục Phase 6 (`/build-phase6`)**

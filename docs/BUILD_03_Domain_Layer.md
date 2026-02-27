@@ -78,7 +78,80 @@ public class ApplicationRole : IdentityRole
 }
 ```
 
-**Tại sao:** Extend Identity để thêm custom properties.
+**File:** `src/Core/Domain/Identity/ApplicationRoleClaim.cs`
+
+```csharp
+using Microsoft.AspNetCore.Identity;
+
+namespace ECO.WebApi.Domain.Identity;
+
+public class ApplicationRoleClaim : IdentityRoleClaim<string>
+{
+    public string? CreatedBy { get; set; }
+    public DateTime CreatedOn { get; set; }
+}
+```
+
+**File:** `src/Core/Domain/Identity/Action.cs`
+
+```csharp
+namespace ECO.WebApi.Domain.Identity;
+
+public class Action
+{
+    public string Id { get; set; } = default!;
+    public string Name { get; set; } = default!;
+    public int SortOrder { get; set; }
+    public bool IsActive { get; set; }
+}
+```
+
+**File:** `src/Core/Domain/Identity/Function.cs`
+
+```csharp
+namespace ECO.WebApi.Domain.Identity;
+
+public class Function
+{
+    public string Id { get; set; } = default!;
+    public string Name { get; set; } = default!;
+    public string? ParentId { get; set; }
+    public int SortOrder { get; set; }
+    public bool IsActive { get; set; }
+}
+```
+
+**File:** `src/Core/Domain/Identity/Permission.cs`
+
+```csharp
+namespace ECO.WebApi.Domain.Identity;
+
+public class Permission
+{
+    public string RoleId { get; set; } = default!;
+    public string FunctionId { get; set; } = default!;
+    public string ActionId { get; set; } = default!;
+    public virtual ApplicationRole Role { get; set; } = default!;
+    public virtual Function Function { get; set; } = default!;
+    public virtual Action Action { get; set; } = default!;
+}
+```
+
+**File:** `src/Core/Domain/Identity/ActionInFunction.cs`
+
+```csharp
+namespace ECO.WebApi.Domain.Identity;
+
+public class ActionInFunction
+{
+    public string ActionId { get; set; } = default!;
+    public string FunctionId { get; set; } = default!;
+    public virtual Action Action { get; set; } = default!;
+    public virtual Function Function { get; set; } = default!;
+}
+```
+
+**Tại sao:** Extend Identity để thêm custom properties và hỗ trợ role-based authorization mở rộng với Functions và Actions.
 
 ---
 

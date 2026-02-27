@@ -33,7 +33,7 @@ Ví dụ:
 
 3. Push lên remote
 ```bash
-git push origin main
+git push origin develop
 ```
 
 4. Confirm push thành công

@@ -152,5 +152,6 @@ Expect: Hangfire dashboard accessible tại https://localhost:7001/hangfire
 - [ ] Email: SMTP service compile OK
 - [ ] Blob Storage: Azure/AWS service compile OK
 - [ ] Hangfire: Dashboard accessible
+- [ ] Thực hiện chỉnh sửa docs sau khi đã hoàn thiện phase này cho phù hợp (cập nhật docs nếu trong quá trình implement có thay đổi/tối ưu so với docs gốc).
 
 **⏸️ DỪNG: Notify user review Phase 6 trước khi tiếp tục Phase 7 (`/build-phase7`)**

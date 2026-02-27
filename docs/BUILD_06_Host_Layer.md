@@ -57,6 +57,7 @@ Tài liệu này hướng dẫn xây dựng Host Layer - ASP.NET Core Web API en
 	<!-- Web API Packages -->
 	<ItemGroup>
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
 	</ItemGroup>
 
 	<!-- Configuration Files -->
@@ -173,6 +174,29 @@ database.json (base)
 }
 ```
 
+**File:** `src/Host/Host/Configurations/logger.json`
+
+```json
+{
+  "Serilog": {
+    "Using": [ "Serilog.Sinks.Console" ],
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Warning"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" }
+    ]
+  }
+}
+```
+
+*(Lưu ý: File `logger.json` ở Phase 1 chỉ là placeholder đơn giản nhất để application khởi động được. Full cấu hình ghi file log sẽ được thêm ở BUILD_07).*
+
+
 ---
 
 ## 4. Tạo Program.cs (Minimal Version)
@@ -185,49 +209,71 @@ database.json (base)
 using ECO.WebApi.Application;
 using ECO.WebApi.Host.Configurations;
 using ECO.WebApi.Infrastructure;
+using ECO.WebApi.Infrastructure.Logging;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+StaticLogger.EnsureInitialized();
+Log.Information("Server Booting Up...");
 
-// 1. Load configurations
-builder.AddConfigurations();
-
-// 2. Add services to DI container
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-
-// 3. Add layers
-builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration);
-
-// 4. Add Swagger
-builder.Services.AddSwaggerGen(options =>
+try
 {
-  options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    var builder = WebApplication.CreateBuilder(args);
+
+    // 1. Load configurations
+    builder.AddConfigurations();
+
+    // 2. Register Serilog
+    builder.RegisterSerilog();
+
+    // 3. Add services to DI container
+    builder.Services.AddControllers();
+    builder.Services.AddEndpointsApiExplorer();
+
+    // 4. Add layers
+    builder.Services.AddApplication();
+    builder.Services.AddInfrastructure(builder.Configuration);
+
+    // 5. Add Swagger
+    builder.Services.AddSwaggerGen(options =>
     {
-        Title = "ECO.WebApi",
-        Version = "v1",
-        Description = "E-Commerce API built with Clean Architecture"
+        options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+        {
+            Title = "ECO.WebApi",
+            Version = "v1",
+            Description = "E-Commerce API built with Clean Architecture"
+        });
     });
-});
 
-// 5. Build application
-var app = builder.Build();
+    // 6. Build application
+    var app = builder.Build();
 
-// 6. Configure middleware pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    // 7. Configure middleware pipeline
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    // 8. Use Infrastructure middleware
+    app.UseInfrastructure(builder.Configuration);
+
+    // 9. Map endpoints
+    app.MapEndpoints();
+
+    // 10. Run application
+    app.Run();
 }
-
-// 7. Use Infrastructure middleware
-app.UseInfrastructure(builder.Configuration);
-
-// 8. Map endpoints
-app.MapEndpoints();
-
-// 9. Run application
-app.Run();
+catch (Exception ex)
+{
+    StaticLogger.EnsureInitialized();
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    StaticLogger.EnsureInitialized();
+    Log.Information("Server Shutting down...");
+    Log.CloseAndFlush();
+}
 ```
 
 **Giải thích thứ tự quan trọng:**
@@ -235,21 +281,22 @@ app.Run();
 **Phase 1: Setup (Before Build)**
 ```
 1. Load Configurations       → JSON files → IConfiguration
-2. Add Controllers/Swagger   → ASP.NET Core services
-3. AddApplication()   → MediatR, FluentValidation
-4. AddInfrastructure()       → DbContext, Repositories
-5. Add Swagger           → API documentation
+2. Register Serilog          → Logging Provider
+3. Add Controllers/Swagger   → ASP.NET Core services
+4. AddApplication()          → MediatR, FluentValidation
+5. AddInfrastructure()       → DbContext, Repositories
+6. Add Swagger               → API documentation
 ```
 **Phase 2: Build**
 ```
-6. Build application         → Create IServiceProvider
+7. Build application         → Create IServiceProvider
 ```
 **Phase 3: Runtime (After Build)**
 ```
-7. Configure middleware      → Request pipeline
-8. UseInfrastructure()       → Routing, HTTPS redirection
-9. MapEndpoints()     → Map controllers
-10. Run()        → Start listening
+8. Configure middleware      → Request pipeline
+9. UseInfrastructure()       → Routing, HTTPS redirection
+10. MapEndpoints()           → Map controllers
+11. Run()                    → Start listening
 ```
 
 

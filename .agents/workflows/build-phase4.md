@@ -172,5 +172,6 @@ dotnet build
 - [ ] CRUD roles hoạt động qua Swagger
 - [ ] Permission authorization chặn unauthorized access
 - [ ] OAuth2 compile OK
+- [ ] Thực hiện chỉnh sửa docs sau khi đã hoàn thiện phase này cho phù hợp (cập nhật docs nếu trong quá trình implement có thay đổi/tối ưu so với docs gốc).
 
 **⏸️ DỪNG: Notify user review Phase 4 trước khi tiếp tục Phase 5 (`/build-phase5`)**

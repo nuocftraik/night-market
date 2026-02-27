@@ -163,5 +163,6 @@ dotnet build
 - [ ] Notifications SignalR hoạt động
 - [ ] Database designs applied thành công
 - [ ] Payment integrations compile OK
+- [ ] Thực hiện chỉnh sửa docs sau khi đã hoàn thiện phase này cho phù hợp (cập nhật docs nếu trong quá trình implement có thay đổi/tối ưu so với docs gốc).
 
 **⏸️ DỪNG: Notify user review Phase 7 — Project base HOÀN THÀNH! 🎉**

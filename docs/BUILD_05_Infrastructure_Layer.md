@@ -64,19 +64,25 @@ Tài liệu này hướng dẫn xây dựng Infrastructure Layer - chứa implem
 
 	<!-- Other Core Packages -->
 	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+		
+		<!-- Serilog: Thêm trước cho Persistence Startup -->
+		<PackageReference Include="Serilog" Version="3.1.1" />
+		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
 	</ItemGroup>
 </Project>
 ```
 
 **Giải thích packages chính:**
+- `Microsoft.AspNetCore.App` - Cần thiết cho các ASP.NET Core types (như `ILoggingBuilder`) dùng trong Infrastructure.
 - `EntityFrameworkCore.SqlServer` - Database provider cho SQL Server
 - `EntityFrameworkCore.Tools` - Cho migrations (Add-Migration, Update-Database)
-- `Ardalis.Specification.EntityFrameworkCore` - Specification pattern support cho EF Core
+- `Serilog` - Framework logging. Được thêm trước ở Phase 1 để code Bootstrap compiling thành công. Sẽ setup JSON config đầy đủ ở BUILD_07.
 
-**Lưu ý:** Các packages khác (Hangfire, Serilog, MailKit...) sẽ được thêm ở các bước sau khi implement từng module cụ thể.
+**Lưu ý:** Các packages khác (Hangfire, MailKit...) sẽ được thêm ở các bước sau khi implement từng module cụ thể.
 
 ---
 

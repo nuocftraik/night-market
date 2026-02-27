@@ -170,5 +170,6 @@ dotnet build
 - [ ] Database tự động migrate khi chạy app
 - [ ] Seed data: Actions, Functions, Roles, Admin User tồn tại trong DB
 - [ ] Repository interfaces + implementations compile OK
+- [ ] Thực hiện chỉnh sửa docs sau khi đã hoàn thiện phase này cho phù hợp (cập nhật docs nếu trong quá trình implement có thay đổi/tối ưu so với docs gốc).
 
 **⏸️ DỪNG: Notify user review Phase 2 trước khi tiếp tục Phase 3 (`/build-phase3`)**

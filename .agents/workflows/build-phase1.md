@@ -150,5 +150,6 @@ dotnet run --project src/Host/Host/Host.csproj
 - [ ] `dotnet run` — API khởi động thành công
 - [ ] Swagger UI accessible tại https://localhost:7001/swagger
 - [ ] 6 projects tồn tại: Shared, Domain, Application, Infrastructure, Host, Migrators.MSSQL
+- [ ] Thực hiện chỉnh sửa docs sau khi đã hoàn thiện phase này cho phù hợp (cập nhật docs nếu trong quá trình implement có thay đổi/tối ưu so với docs gốc).
 
 **⏸️ DỪNG: Notify user review Phase 1 trước khi tiếp tục Phase 2 (`/build-phase2`)**
