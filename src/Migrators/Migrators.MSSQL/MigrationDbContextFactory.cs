@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using NightMarket.WebApi.Application.Common.Interfaces;
 using NightMarket.WebApi.Infrastructure.Persistence.Context;
+using System.Security.Claims;
 
 namespace Migrators.MSSQL;
 
@@ -23,6 +25,19 @@ public class MigrationDbContextFactory : IDesignTimeDbContextFactory<Application
             connectionString,
             x => x.MigrationsAssembly("Migrators.MSSQL"));
 
-        return new ApplicationDbContext(optionsBuilder.Options);
+        return new ApplicationDbContext(optionsBuilder.Options, new DesignTimeCurrentUser());
     }
+}
+
+/// <summary>
+/// Stub ICurrentUser for design-time migrations (no real user context available).
+/// </summary>
+internal class DesignTimeCurrentUser : ICurrentUser
+{
+    public string? Name => null;
+    public Guid GetUserId() => Guid.Empty;
+    public string? GetUserEmail() => null;
+    public bool IsAuthenticated() => false;
+    public bool IsInRole(string role) => false;
+    public IEnumerable<Claim>? GetUserClaims() => null;
 }
