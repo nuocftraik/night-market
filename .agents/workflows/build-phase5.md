@@ -33,6 +33,8 @@ dotnet run --project src/Host/Host/Host.csproj
 ```
 Expect: Delete entity → entity vẫn tồn tại trong DB với `DeletedOn` populated
 
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 19** trước khi sang bước tiếp theo.
+
 ---
 
 ## Bước 20: Auditing
@@ -58,6 +60,8 @@ dotnet build
 dotnet run --project src/Host/Host/Host.csproj
 ```
 Expect: Changes tracked trong Trails table khi CRUD entities
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 20** trước khi kết thúc phase.
 
 ---
 

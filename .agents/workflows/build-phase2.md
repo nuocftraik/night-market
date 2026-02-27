@@ -30,6 +30,8 @@ dotnet run --project src/Host/Host/Host.csproj
 ```
 Expect: Logs xuất hiện trong console với structured format
 
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 7** trước khi sang bước tiếp theo.
+
 ---
 
 ## Bước 8: Database Initialization
@@ -56,6 +58,8 @@ dotnet build
 dotnet run --project src/Host/Host/Host.csproj
 ```
 Expect: Database tự động migrate và seed data
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 8** trước khi sang bước tiếp theo.
 
 ---
 

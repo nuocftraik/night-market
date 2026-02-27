@@ -40,8 +40,8 @@ internal static class Extensions
             // Get business interfaces (exclude marker interfaces)
             var serviceInterfaces = implementationType.GetInterfaces()
                 .Where(i => i != markerInterfaceType &&
-                    !typeof(ITransientService).IsAssignableFrom(i) &&
-                    !typeof(IScopedService).IsAssignableFrom(i))
+                    i != typeof(ITransientService) &&
+                    i != typeof(IScopedService))
                 .ToList();
 
             // Register with first business interface found

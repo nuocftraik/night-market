@@ -31,6 +31,8 @@ dotnet build
 ```
 Expect: 0 errors
 
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 1** trước khi sang bước tiếp theo.
+
 ---
 
 ## Bước 2: Shared Layer
@@ -140,6 +142,8 @@ dotnet build
 dotnet build
 dotnet run --project src/Host/Host/Host.csproj
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 6** trước khi kết thúc phase.
 
 ---
 

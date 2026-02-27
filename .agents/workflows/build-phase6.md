@@ -23,10 +23,11 @@ description: "Phase 6: Infrastructure Services — Caching, File Storage, Email,
 - Cache patterns (Cache-Aside, Write-Through)
 
 **Verify:**
-// turbo
 ```bash
 dotnet build
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 21** trước khi sang bước tiếp theo.
 
 ---
 
@@ -44,10 +45,11 @@ dotnet build
 - `FileUploadRequest` DTO
 
 **Verify:**
-// turbo
 ```bash
 dotnet build
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 22** trước khi sang bước tiếp theo.
 
 ---
 
@@ -66,10 +68,11 @@ dotnet build
 - `SMTPEmailSettings` configuration
 
 **Verify:**
-// turbo
 ```bash
 dotnet build
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 23** trước khi sang bước tiếp theo.
 
 ---
 
@@ -89,10 +92,11 @@ dotnet build
 - `UploadBlobRequest`, `BlobModel` DTOs
 
 **Verify:**
-// turbo
 ```bash
 dotnet build
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 24** trước khi sang bước tiếp theo.
 
 ---
 
@@ -111,10 +115,11 @@ dotnet build
 **⚠️ Optional**: Chỉ implement nếu user cần AWS thay vì Azure
 
 **Verify:**
-// turbo
 ```bash
 dotnet build
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 24-AWS** trước khi sang bước tiếp theo.
 
 ---
 
@@ -140,6 +145,8 @@ dotnet build
 dotnet run --project src/Host/Host/Host.csproj
 ```
 Expect: Hangfire dashboard accessible tại https://localhost:7001/hangfire
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 25** trước khi kết thúc phase.
 
 ---
 

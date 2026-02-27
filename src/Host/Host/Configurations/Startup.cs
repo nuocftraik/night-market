@@ -21,6 +21,10 @@ internal static class Startup
             .AddJsonFile($"{configurationsDirectory}/logger.json", optional: false, reloadOnChange: true)
             .AddJsonFile($"{configurationsDirectory}/logger.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
 
+            // Security configuration
+            .AddJsonFile($"{configurationsDirectory}/security.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"{configurationsDirectory}/security.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+
             // Environment variables (override JSON)
             .AddEnvironmentVariables();
 

@@ -37,6 +37,8 @@ description: "Phase 3: Core Services — CurrentUser, Serializer, Exceptions, Va
 dotnet build
 ```
 
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 12** trước khi sang bước tiếp theo.
+
 ---
 
 ## Bước 13: Exception Handling & Middleware
@@ -70,6 +72,8 @@ dotnet run --project src/Host/Host/Host.csproj
 ```
 Expect: API trả về proper HTTP status codes cho exceptions
 
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 13** trước khi sang bước tiếp theo.
+
 ---
 
 ## Bước 14: Validation Behavior
@@ -90,6 +94,8 @@ Expect: API trả về proper HTTP status codes cho exceptions
 dotnet build
 ```
 Expect: Validation errors trả về 422 Unprocessable Entity
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 14** trước khi kết thúc phase.
 
 ---
 

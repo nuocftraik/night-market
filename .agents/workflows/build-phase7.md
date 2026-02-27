@@ -23,10 +23,11 @@ description: "Phase 7: Business Modules — Export, PDF, Catalog, Notifications,
 - Batch export operations
 
 **Verify:**
-// turbo
 ```bash
 dotnet build
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 26** trước khi sang bước tiếp theo.
 
 ---
 
@@ -44,10 +45,11 @@ dotnet build
 - Watermarks, digital signatures
 
 **Verify:**
-// turbo
 ```bash
 dotnet build
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 27** trước khi sang bước tiếp theo.
 
 ---
 
@@ -68,10 +70,11 @@ dotnet build
 - Controllers + Swagger documentation
 
 **Verify:**
-// turbo
 ```bash
 dotnet build
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 28** trước khi sang bước tiếp theo.
 
 ---
 
@@ -89,10 +92,11 @@ dotnet build
 - Event-Driven auto-send
 
 **Verify:**
-// turbo
 ```bash
 dotnet build
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 29** trước khi sang bước tiếp theo.
 
 ---
 
@@ -101,6 +105,8 @@ dotnet build
 ```
 Đọc file: docs/BUILD_30_Database_Design_Identity_Module_MultiGroup.md
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 30** trước khi sang bước tiếp theo.
 
 ---
 
@@ -112,6 +118,8 @@ dotnet build
 2. docs/BUILD_31_Part2.md
 ```
 
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 31** trước khi sang bước tiếp theo.
+
 ---
 
 ## Bước 32: Order & Cart Module DB Design
@@ -122,6 +130,8 @@ dotnet build
 2. docs/BUILD_32_Part2.md
 ```
 
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 32** trước khi sang bước tiếp theo.
+
 ---
 
 ## Bước 33: Inventory Module DB Design
@@ -129,6 +139,8 @@ dotnet build
 ```
 Đọc file: docs/BUILD_33_Database_Design_Inventory_Module.md
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 33** trước khi sang bước tiếp theo.
 
 ---
 
@@ -139,6 +151,8 @@ dotnet build
 1. docs/BUILD_34_Database_Design_Payment_Gateway_Integration.md
 2. docs/BUILD_34_Part2_Webhooks_Refunds_Security.md
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 34** trước khi sang bước tiếp theo.
 
 ---
 
@@ -151,6 +165,8 @@ dotnet build
 - docs/BUILD_37_Payment_Gateway_ZaloPay_Integration.md
 - docs/BUILD_38_Payment_Gateway_VietQR_Integration.md
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 35-38** trước khi kết thúc phase.
 
 ---
 

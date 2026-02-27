@@ -9,4 +9,8 @@ public class ApplicationUser : IdentityUser
     public string? ObjectId { get; set; }
     public string? ImageUrl { get; set; }
     public bool IsActive { get; set; }
+
+    // Refresh token fields
+    public string? RefreshToken { get; set; }
+    public DateTime RefreshTokenExpiryTime { get; set; }
 }

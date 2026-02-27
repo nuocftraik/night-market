@@ -24,7 +24,7 @@ public static class Startup
 
             // Phase 3: Auth & Common Services & Middleware
             .AddExceptionMiddleware()
-            .AddCurrentUser()
+            .AddAuth()
             .AddCommonServices()
 
             // Phase 2: Routing
@@ -33,8 +33,6 @@ public static class Startup
             // ⭐ Auto-register services using marker interfaces
             .AddServices();
 
-        // TODO: Các modules khác sẽ thêm sau
-        // .AddAuth(config)          - BUILD_15
         // .AddCaching(config)       - BUILD_21
         // .AddMailing(config)       - BUILD_23
         // .AddBackgroundJobs(config) - BUILD_25
@@ -50,12 +48,8 @@ public static class Startup
         return builder
             .UseExceptionMiddleware()
             .UseRouting()
-            .UseCurrentUserMiddleware()
+            .UseAuth()
             .UseHttpsRedirection();
-
-        // TODO: Middleware khác sẽ thêm sau
-        // .UseAuthentication()
-        // .UseAuthorization()
     }
 
     /// <summary>

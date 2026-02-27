@@ -30,6 +30,8 @@ dotnet run --project src/Host/Host/Host.csproj
 ```
 Expect: Login endpoint trả về JWT token
 
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 15** trước khi sang bước tiếp theo.
+
 ---
 
 ## Bước 16A: User Service
@@ -53,6 +55,8 @@ Expect: Login endpoint trả về JWT token
 dotnet build
 ```
 
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 16A** trước khi sang bước tiếp theo.
+
 ---
 
 ## Bước 16B: Role Service
@@ -73,6 +77,8 @@ dotnet build
 dotnet build
 ```
 
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 16B** trước khi sang bước tiếp theo.
+
 ---
 
 ## Bước 16C: Function Service
@@ -92,6 +98,8 @@ dotnet build
 ```bash
 dotnet build
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 16C** trước khi sang bước tiếp theo.
 
 ---
 
@@ -117,6 +125,8 @@ dotnet run --project src/Host/Host/Host.csproj
 ```
 Expect: APIs visible trong Swagger UI
 
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 16D** trước khi sang bước tiếp theo.
+
 ---
 
 ## Bước 17: Permission Authorization
@@ -140,6 +150,8 @@ dotnet run --project src/Host/Host/Host.csproj
 ```
 Expect: Endpoints yêu cầu permission mới access được
 
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 17** trước khi sang bước tiếp theo.
+
 ---
 
 ## Bước 18: OAuth2 Integration
@@ -160,6 +172,8 @@ Expect: Endpoints yêu cầu permission mới access được
 ```bash
 dotnet build
 ```
+
+**Lưu ý:** Chạy workflow `/git-save` để commit code cho **Bước 18** trước khi sang bước tiếp theo.
 
 ---
 
