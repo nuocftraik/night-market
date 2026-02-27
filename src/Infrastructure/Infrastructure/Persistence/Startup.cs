@@ -1,4 +1,7 @@
+using NightMarket.WebApi.Application.Common.Persistence;
+using NightMarket.WebApi.Domain.Common.Contracts;
 using NightMarket.WebApi.Infrastructure.Persistence.Context;
+using NightMarket.WebApi.Infrastructure.Persistence.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -36,19 +39,48 @@ internal static class Startup
             .ValidateOnStart();
 
         // Register DbContext
-        return services
-            .AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
-            {
-                var databaseSettings = serviceProvider
-                    .GetRequiredService<IOptions<DatabaseSettings>>().Value;
+        services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+        {
+            var databaseSettings = serviceProvider
+                .GetRequiredService<IOptions<DatabaseSettings>>().Value;
 
-                _logger.Information("Current DB Provider: {dbProvider}",
-                    databaseSettings.DBProvider);
+            _logger.Information("Current DB Provider: {dbProvider}",
+                databaseSettings.DBProvider);
 
-                options.UseDatabase(
-                    databaseSettings.DBProvider,
-                    databaseSettings.ConnectionString);
-            });
+            options.UseDatabase(
+                databaseSettings.DBProvider,
+                databaseSettings.ConnectionString);
+        });
+
+        return services.AddRepositories();
+    }
+
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        // Register base repositories
+        services.AddScoped(typeof(IRepository<>), typeof(ApplicationDbRepository<>));
+        
+        // Auto-discover all Aggregate Roots và register repositories
+        foreach (var aggregateRootType in
+            typeof(IAggregateRoot).Assembly.GetExportedTypes()
+                .Where(t => typeof(IAggregateRoot).IsAssignableFrom(t) && t.IsClass)
+                .ToList())
+        {
+            // IReadRepository<T> → alias của IRepository<T>
+            services.AddScoped(
+                typeof(IReadRepository<>).MakeGenericType(aggregateRootType),
+                sp => sp.GetRequiredService(typeof(IRepository<>).MakeGenericType(aggregateRootType)));
+
+            // IRepositoryWithEvents<T> → EventAddingRepositoryDecorator wrapping IRepository
+            services.AddScoped(
+                typeof(IRepositoryWithEvents<>).MakeGenericType(aggregateRootType),
+                sp => Activator.CreateInstance(
+                    typeof(EventAddingRepositoryDecorator<>).MakeGenericType(aggregateRootType),
+                    sp.GetRequiredService(typeof(IRepository<>).MakeGenericType(aggregateRootType)))
+                ?? throw new InvalidOperationException($"Could not create EventAddingRepositoryDecorator for {aggregateRootType.Name}"));
+        }
+
+        return services;
     }
 
     internal static DbContextOptionsBuilder UseDatabase(
