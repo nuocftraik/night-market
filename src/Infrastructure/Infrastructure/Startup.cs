@@ -1,3 +1,4 @@
+using NightMarket.WebApi.Infrastructure.Common;
 using NightMarket.WebApi.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
@@ -20,7 +21,10 @@ public static class Startup
             .AddPersistence()
 
             // Phase 2: Routing
-            .AddRouting(options => options.LowercaseUrls = true);
+            .AddRouting(options => options.LowercaseUrls = true)
+            
+            // ⭐ Auto-register services using marker interfaces
+            .AddServices();
 
         // TODO: Các modules khác sẽ thêm sau
         // .AddAuth(config)          - BUILD_15
