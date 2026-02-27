@@ -9,4 +9,6 @@ public class Action
     public string Name { get; set; } = default!;
     public int SortOrder { get; set; }
     public bool IsActive { get; set; } = true;
+
+    public virtual ICollection<ActionInFunction> ActionInFunctions { get; set; } = new List<ActionInFunction>();
 }

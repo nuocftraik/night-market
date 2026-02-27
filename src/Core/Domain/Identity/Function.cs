@@ -14,4 +14,37 @@ public class Function
     public bool IsActive { get; set; } = true;
 
     public virtual ICollection<ActionInFunction> ActionInFunctions { get; set; } = new List<ActionInFunction>();
+
+    public Function()
+    {
+    }
+
+    public void AddAction(string actionId)
+    {
+        ActionInFunctions.Add(new ActionInFunction(actionId, Id));
+    }
+
+    public void UpdateActions(List<string>? newActionIds)
+    {
+        if (newActionIds == null || newActionIds.Count == 0)
+        {
+            ActionInFunctions.Clear();
+            return;
+        }
+
+        var toRemove = ActionInFunctions.Where(aif => !newActionIds.Contains(aif.ActionId)).ToList();
+        foreach (var item in toRemove)
+        {
+            ActionInFunctions.Remove(item);
+        }
+
+        var existingActionIds = ActionInFunctions.Select(aif => aif.ActionId).ToHashSet();
+        foreach (var actionId in newActionIds)
+        {
+            if (!existingActionIds.Contains(actionId))
+            {
+                ActionInFunctions.Add(new ActionInFunction(actionId, Id));
+            }
+        }
+    }
 }
