@@ -12,4 +12,6 @@ public class Function
     public string? Url { get; set; }
     public string? Icon { get; set; }
     public bool IsActive { get; set; } = true;
+
+    public virtual ICollection<ActionInFunction> ActionInFunctions { get; set; } = new List<ActionInFunction>();
 }

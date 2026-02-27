@@ -9,6 +9,15 @@ public class Permission
     public string FunctionId { get; set; } = default!;
     public string ActionId { get; set; } = default!;
 
+    public Permission() { }
+
+    public Permission(string roleId, string functionId, string actionId)
+    {
+        RoleId = roleId;
+        FunctionId = functionId;
+        ActionId = actionId;
+    }
+
     public virtual ApplicationRole Role { get; set; } = default!;
     public virtual Function Function { get; set; } = default!;
     public virtual Action Action { get; set; } = default!;
