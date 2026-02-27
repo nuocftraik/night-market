@@ -3,14 +3,6 @@
 > 📚 [Quay lại Mục lục](BUILD_INDEX.md)  
 > 📋 **Prerequisites:** Bước 17 (Permission Authorization) đã hoàn thành
 
-> [!IMPORTANT]
-> **Implementation Notes (cập nhật sau khi implement):**
-> - **Namespace:** `NightMarket.WebApi.*` (không phải `ECO.WebApi.*`)
-> - **AuthenticationService:** Declared `internal class` (không phải `public class` như doc gốc) — consistent với pattern Infrastructure layer
-> - **OAuth2 Startup:** Chỉ register `Configure<GoogleAuthSettings>` và `Configure<FacebookAuthSettings>`, không add `.AddGoogle()/.AddFacebook()` middleware (token validation thực hiện manual trong service)
-> - **NuGet packages:** Dùng version `9.0.0` cho ASP.NET packages (match .NET 9), `Google.Apis.Auth 1.68.0`
-> - **appsettings.json:** Đã thêm placeholder config cho `Authentication:Google` và `Authentication:Facebook`
-
 Tài liệu này hướng dẫn xây dựng OAuth2 Integration - Social Login với Google và Facebook.
 
 ---

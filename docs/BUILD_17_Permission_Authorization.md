@@ -3,15 +3,6 @@
 > 📚 [Quay lại Mục lục](BUILD_INDEX.md)  
 > 📋 **Prerequisites:** Bước 16C (Function Service) đã hoàn thành
 
-> [!IMPORTANT]
-> **Implementation Notes (cập nhật sau khi implement):**
-> - **Namespace:** `NightMarket.WebApi.*` và `NightMarket.Shared.*` (không phải `ECO.WebApi.*`)
-> - **Constants:** `AppAction`, `AppFunction`, `AppPermission`, `AppClaims` (không phải `ECO*`)
-> - **File names:** `AppPermission.cs`, `AppAction.cs`, `AppFunction.cs`, `AppClaims.cs` (không phải `ECOPermissions.cs`)
-> - **TokenService:** Đã cập nhật `GetClaims()` → `GetClaimsAsync()` với async permission loading. Inject `IUserService` vào constructor
-> - **UserService.Permission.cs:** Implemented as partial class, removed duplicate stub methods từ `UserService.cs`
-> - **PermissionPolicyProvider:** Check `AppClaims.Permission` prefix (= `"permission"`) thay vì `"Permissions"` prefix
-
 Tài liệu này hướng dẫn xây dựng Permission-Based Authorization System - Dynamic permission checks với ASP.NET Core Authorization.
 
 ---
