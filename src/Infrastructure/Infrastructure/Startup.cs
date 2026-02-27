@@ -24,7 +24,7 @@ public static class Startup
 
             // Phase 3: Auth & Common Services & Middleware
             .AddExceptionMiddleware()
-            .AddAuth()
+            .AddAuth(config)
             .AddCommonServices()
 
             // Phase 2: Routing

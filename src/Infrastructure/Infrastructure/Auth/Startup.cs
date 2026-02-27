@@ -1,8 +1,10 @@
 using NightMarket.WebApi.Application.Common.Interfaces;
 using NightMarket.WebApi.Infrastructure.Auth.Jwt;
+using NightMarket.WebApi.Infrastructure.Auth.OAuth2;
 using NightMarket.WebApi.Infrastructure.Auth.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace NightMarket.WebApi.Infrastructure.Auth;
@@ -12,11 +14,12 @@ namespace NightMarket.WebApi.Infrastructure.Auth;
 /// </summary>
 internal static class Startup
 {
-    internal static IServiceCollection AddAuth(this IServiceCollection services)
+    internal static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration config)
     {
         services
             .AddCurrentUser()
             .AddPermissions()
+            .AddOAuth2Authentication(config)
             // JWT Authentication
             .AddJwtAuth();
             
