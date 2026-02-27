@@ -245,7 +245,7 @@ public abstract class BaseDbContext : DbContext
 **File:** `src/Core/Domain/Auditing/TrailType.cs`
 
 ```csharp
-namespace ECO.WebApi.Domain.Auditing;
+namespace NightMarket.WebApi.Domain.Auditing;
 
 /// <summary>
 /// Type of audit trail entry.
@@ -303,9 +303,9 @@ public TrailType Type { get; set; } = TrailType.Create;
 **File:** `src/Core/Domain/Auditing/Trail.cs`
 
 ```csharp
-using ECO.WebApi.Domain.Common.Contracts;
+using NightMarket.WebApi.Domain.Common.Contracts;
 
-namespace ECO.WebApi.Domain.Auditing;
+namespace NightMarket.WebApi.Domain.Auditing;
 
 /// <summary>
 /// Audit trail entity - lưu trữ tất cả thay đổi trong hệ thống.
@@ -521,13 +521,13 @@ CREATE INDEX IX_Trails_Type ON Trails(Type);
 **File:** `src/Infrastructure/Infrastructure/Auditing/AuditTrail.cs`
 
 ```csharp
-using ECO.WebApi.Application.Common.Interfaces;
-using ECO.WebApi.Domain.Auditing;
-using ECO.WebApi.Domain.Common.Contracts;
+using NightMarket.WebApi.Application.Common.Interfaces;
+using NightMarket.WebApi.Domain.Auditing;
+using NightMarket.WebApi.Domain.Common.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace ECO.WebApi.Infrastructure.Auditing;
+namespace NightMarket.WebApi.Infrastructure.Auditing;
 
 /// <summary>
 /// Helper class để build audit trail entries từ EF Core EntityEntry
@@ -800,15 +800,15 @@ trail.PrimaryKey = serializer.Serialize(keyValues);
 **File:** `src/Infrastructure/Infrastructure/Persistence/Context/BaseDbContext.cs`
 
 ```csharp
-using ECO.WebApi.Application.Common.Events;
-using ECO.WebApi.Application.Common.Interfaces;
-using ECO.WebApi.Domain.Auditing;
-using ECO.WebApi.Domain.Common.Contracts;
-using ECO.WebApi.Infrastructure.Auditing;
-using ECO.WebApi.Infrastructure.Persistence.Extensions;
+using NightMarket.WebApi.Application.Common.Events;
+using NightMarket.WebApi.Application.Common.Interfaces;
+using NightMarket.WebApi.Domain.Auditing;
+using NightMarket.WebApi.Domain.Common.Contracts;
+using NightMarket.WebApi.Infrastructure.Auditing;
+using NightMarket.WebApi.Infrastructure.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECO.WebApi.Infrastructure.Persistence.Context;
+namespace NightMarket.WebApi.Infrastructure.Persistence.Context;
 
 /// <summary>
 /// Base DbContext với audit trail, soft delete, và domain events support
@@ -1085,9 +1085,9 @@ private List<Trail> CaptureAuditTrails()
 **File:** `src/Core/Application/Auditing/IAuditService.cs`
 
 ```csharp
-using ECO.WebApi.Application.Common.Models;
+using NightMarket.WebApi.Application.Common.Models;
 
-namespace ECO.WebApi.Application.Auditing;
+namespace NightMarket.WebApi.Application.Auditing;
 
 /// <summary>
 /// Service interface for querying audit trails
@@ -1114,9 +1114,9 @@ public interface IAuditService
 **File:** `src/Core/Application/Auditing/AuditDto.cs`
 
 ```csharp
-using ECO.WebApi.Domain.Auditing;
+using NightMarket.WebApi.Domain.Auditing;
 
-namespace ECO.WebApi.Application.Auditing;
+namespace NightMarket.WebApi.Application.Auditing;
 
 /// <summary>
 /// DTO for audit trail entry
@@ -1190,9 +1190,9 @@ dto.Type = trail.Type.ToString(); // "Create", "Update", "Delete"
 **File:** `src/Core/Application/Auditing/GetMyAuditLogsRequest.cs`
 
 ```csharp
-using ECO.WebApi.Application.Common.Models;
+using NightMarket.WebApi.Application.Common.Models;
 
-namespace ECO.WebApi.Application.Auditing;
+namespace NightMarket.WebApi.Application.Auditing;
 
 /// <summary>
 /// Request to get current user's audit logs
@@ -1241,15 +1241,15 @@ public class PaginationFilter
 **File:** `src/Infrastructure/Infrastructure/Auditing/AuditService.cs`
 
 ```csharp
-using ECO.WebApi.Application.Auditing;
-using ECO.WebApi.Application.Common.Interfaces;
-using ECO.WebApi.Application.Common.Models;
-using ECO.WebApi.Domain.Auditing;
-using ECO.WebApi.Infrastructure.Persistence.Context;
+using NightMarket.WebApi.Application.Auditing;
+using NightMarket.WebApi.Application.Common.Interfaces;
+using NightMarket.WebApi.Application.Common.Models;
+using NightMarket.WebApi.Domain.Auditing;
+using NightMarket.WebApi.Infrastructure.Persistence.Context;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECO.WebApi.Infrastructure.Auditing;
+namespace NightMarket.WebApi.Infrastructure.Auditing;
 
 /// <summary>
 /// Service implementation for querying audit trails
@@ -1397,14 +1397,14 @@ PageNumber = 2, PageSize = 10: Skip 10, Take 10 (records 11-20)
 **File:** `src/Host/Host/Controllers/Identity/PersonalController.cs` (UPDATE)
 
 ```csharp
-using ECO.WebApi.Application.Auditing;
-using ECO.WebApi.Application.Common.Models;
-using ECO.WebApi.Infrastructure.Auth.Permissions;
-using ECO.WebApi.Shared.Authorization;
+using NightMarket.WebApi.Application.Auditing;
+using NightMarket.WebApi.Application.Common.Models;
+using NightMarket.WebApi.Infrastructure.Auth.Permissions;
+using NightMarket.Shared.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ECO.WebApi.Host.Controllers.Identity;
+namespace NightMarket.WebApi.Host.Controllers.Identity;
 
 /// <summary>
 /// Controller for current user's personal information and audit logs
@@ -1423,7 +1423,7 @@ public class PersonalController : BaseApiController
 /// <param name="cancellationToken">Cancellation token</param>
 /// <returns>Paginated list of audit logs</returns>
     [HttpGet("audit-logs")]
-    [MustHavePermission(ECOAction.View, ECOFunction.Users)]
+    [MustHavePermission(AppAction.View, AppFunction.Users)]
     public async Task<ActionResult<PaginationResponse<AuditDto>>> GetMyAuditLogs(
         [FromQuery] GetMyAuditLogsRequest request,
      [FromServices] IAuditService auditService,

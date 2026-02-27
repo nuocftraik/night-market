@@ -120,7 +120,7 @@ await _context.SaveChangesAsync();
 **File:** `src/Core/Domain/Common/Contracts/ISoftDelete.cs`
 
 ```csharp
-namespace ECO.WebApi.Domain.Common.Contracts;
+namespace NightMarket.WebApi.Domain.Common.Contracts;
 
 /// <summary>
 /// Marker interface cho entities hỗ trợ soft delete.
@@ -192,7 +192,7 @@ public DateTime? DeletedOn { get; set; }
 **File:** `src/Core/Domain/Common/Contracts/AuditableEntity.cs`
 
 ```csharp
-namespace ECO.WebApi.Domain.Common.Contracts;
+namespace NightMarket.WebApi.Domain.Common.Contracts;
 
 /// <summary>
 /// Base auditable entity với Guid primary key.
@@ -343,7 +343,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace ECO.WebApi.Infrastructure.Persistence.Extensions;
+namespace NightMarket.WebApi.Infrastructure.Persistence.Extensions;
 
 /// <summary>
 /// Extension methods for ModelBuilder to work with global query filters
@@ -516,13 +516,13 @@ if (existingFilter != null)
 **File:** `src/Infrastructure/Infrastructure/Persistence/Context/BaseDbContext.cs`
 
 ```csharp
-using ECO.WebApi.Application.Common.Events;
-using ECO.WebApi.Application.Common.Interfaces;
-using ECO.WebApi.Domain.Common.Contracts;
-using ECO.WebApi.Infrastructure.Persistence.Extensions;
+using NightMarket.WebApi.Application.Common.Events;
+using NightMarket.WebApi.Application.Common.Interfaces;
+using NightMarket.WebApi.Domain.Common.Contracts;
+using NightMarket.WebApi.Infrastructure.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECO.WebApi.Infrastructure.Persistence.Context;
+namespace NightMarket.WebApi.Infrastructure.Persistence.Context;
 
 /// <summary>
 /// Base DbContext với audit trail, domain events, và soft delete support
@@ -725,9 +725,9 @@ case EntityState.Modified:
 
 ```csharp
 using Ardalis.Specification;
-using ECO.WebApi.Domain.Common.Contracts;
+using NightMarket.WebApi.Domain.Common.Contracts;
 
-namespace ECO.WebApi.Application.Common.Specifications;
+namespace NightMarket.WebApi.Application.Common.Specifications;
 
 /// <summary>
 /// Specification base cho soft delete queries.
@@ -819,9 +819,9 @@ var recentlyDeleted = await _repository.ListAsync(
 **File:** `src/Core/Application/Common/Extensions/SoftDeleteExtensions.cs`
 
 ```csharp
-using ECO.WebApi.Domain.Common.Contracts;
+using NightMarket.WebApi.Domain.Common.Contracts;
 
-namespace ECO.WebApi.Application.Common.Extensions;
+namespace NightMarket.WebApi.Application.Common.Extensions;
 
 /// <summary>
 /// Extension methods cho soft delete operations
@@ -915,13 +915,13 @@ await _context.SaveChangesAsync();
 **File:** `src/Core/Application/Catalog/Products/ProductService.cs` (example)
 
 ```csharp
-using ECO.WebApi.Application.Common.Extensions;
-using ECO.WebApi.Application.Common.Interfaces;
-using ECO.WebApi.Application.Common.Specifications;
-using ECO.WebApi.Domain.Catalog;
+using NightMarket.WebApi.Application.Common.Extensions;
+using NightMarket.WebApi.Application.Common.Interfaces;
+using NightMarket.WebApi.Application.Common.Specifications;
+using NightMarket.WebApi.Domain.Catalog;
 using Mapster;
 
-namespace ECO.WebApi.Application.Catalog.Products;
+namespace NightMarket.WebApi.Application.Catalog.Products;
 
 public interface IProductService : ITransientService
 {
@@ -1078,12 +1078,12 @@ public ProductByIdIncludingDeletedSpec(Guid id)
 **File:** `src/Host/Host/Controllers/Catalog/ProductsController.cs` (example)
 
 ```csharp
-using ECO.WebApi.Application.Catalog.Products;
-using ECO.WebApi.Infrastructure.Auth.Permissions;
-using ECO.WebApi.Shared.Authorization;
+using NightMarket.WebApi.Application.Catalog.Products;
+using NightMarket.WebApi.Infrastructure.Auth.Permissions;
+using NightMarket.Shared.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ECO.WebApi.Host.Controllers.Catalog;
+namespace NightMarket.WebApi.Host.Controllers.Catalog;
 
 [Route("api/catalog/products")]
 public class ProductsController : BaseApiController
@@ -1097,7 +1097,7 @@ public class ProductsController : BaseApiController
 
     // ===== GET: Get all active products =====
     [HttpGet]
-    [MustHavePermission(ECOAction.View, ECOFunction.Products)]
+    [MustHavePermission(AppAction.View, AppFunction.Products)]
   public async Task<ActionResult<List<ProductDto>>> GetAll(CancellationToken ct)
     {
         var products = await _productService.GetAllAsync(ct);
@@ -1106,7 +1106,7 @@ public class ProductsController : BaseApiController
 
   // ===== GET: Get product by ID =====
     [HttpGet("{id:guid}")]
-  [MustHavePermission(ECOAction.View, ECOFunction.Products)]
+  [MustHavePermission(AppAction.View, AppFunction.Products)]
 public async Task<ActionResult<ProductDto>> GetById(Guid id, CancellationToken ct)
   {
       var product = await _productService.GetByIdAsync(id, ct);
@@ -1115,7 +1115,7 @@ public async Task<ActionResult<ProductDto>> GetById(Guid id, CancellationToken c
 
     // ===== GET: Get deleted products (Admin only) =====
   [HttpGet("deleted")]
-    [MustHavePermission(ECOAction.View, ECOFunction.Products)]
+    [MustHavePermission(AppAction.View, AppFunction.Products)]
     public async Task<ActionResult<List<ProductDto>>> GetDeleted(CancellationToken ct)
     {
    var deletedProducts = await _productService.GetDeletedAsync(ct);
@@ -1124,7 +1124,7 @@ public async Task<ActionResult<ProductDto>> GetById(Guid id, CancellationToken c
 
     // ===== POST: Create product =====
     [HttpPost]
-    [MustHavePermission(ECOAction.Create, ECOFunction.Products)]
+    [MustHavePermission(AppAction.Create, AppFunction.Products)]
   public async Task<ActionResult<Guid>> Create(CreateProductRequest request, CancellationToken ct)
     {
    var productId = await _productService.CreateAsync(request, ct);
@@ -1133,7 +1133,7 @@ public async Task<ActionResult<ProductDto>> GetById(Guid id, CancellationToken c
 
     // ===== PUT: Update product =====
     [HttpPut("{id:guid}")]
-    [MustHavePermission(ECOAction.Update, ECOFunction.Products)]
+    [MustHavePermission(AppAction.Update, AppFunction.Products)]
     public async Task<ActionResult> Update(Guid id, UpdateProductRequest request, CancellationToken ct)
     {
         await _productService.UpdateAsync(id, request, ct);
@@ -1142,7 +1142,7 @@ public async Task<ActionResult<ProductDto>> GetById(Guid id, CancellationToken c
 
     // ===== DELETE: Soft delete product =====
     [HttpDelete("{id:guid}")]
-    [MustHavePermission(ECOAction.Delete, ECOFunction.Products)]
+    [MustHavePermission(AppAction.Delete, AppFunction.Products)]
     public async Task<ActionResult> Delete(Guid id, CancellationToken ct)
     {
         await _productService.DeleteAsync(id, ct);
@@ -1151,7 +1151,7 @@ public async Task<ActionResult<ProductDto>> GetById(Guid id, CancellationToken c
 
     // ===== POST: Restore deleted product =====
 [HttpPost("{id:guid}/restore")]
-    [MustHavePermission(ECOAction.Update, ECOFunction.Products)]
+    [MustHavePermission(AppAction.Update, AppFunction.Products)]
     public async Task<ActionResult> Restore(Guid id, CancellationToken ct)
     {
         await _productService.RestoreAsync(id, ct);
@@ -1160,7 +1160,7 @@ public async Task<ActionResult<ProductDto>> GetById(Guid id, CancellationToken c
 
     // ===== DELETE: Permanent delete (Admin only) =====
     [HttpDelete("{id:guid}/permanent")]
-    [MustHavePermission(ECOAction.Delete, ECOFunction.Products)]
+    [MustHavePermission(AppAction.Delete, AppFunction.Products)]
     public async Task<ActionResult> PermanentDelete(Guid id, CancellationToken ct)
     {
      await _productService.PermanentDeleteAsync(id, ct);
