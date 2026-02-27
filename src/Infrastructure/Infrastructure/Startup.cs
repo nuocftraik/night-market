@@ -1,4 +1,6 @@
+using NightMarket.WebApi.Infrastructure.Auth;
 using NightMarket.WebApi.Infrastructure.Common;
+using NightMarket.WebApi.Infrastructure.Middleware;
 using NightMarket.WebApi.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
@@ -19,6 +21,11 @@ public static class Startup
         return services
             // Phase 1: Database
             .AddPersistence()
+
+            // Phase 3: Auth & Common Services & Middleware
+            .AddExceptionMiddleware()
+            .AddCurrentUser()
+            .AddCommonServices()
 
             // Phase 2: Routing
             .AddRouting(options => options.LowercaseUrls = true)
@@ -41,13 +48,14 @@ public static class Startup
         IConfiguration config)
     {
         return builder
+            .UseExceptionMiddleware()
             .UseRouting()
+            .UseCurrentUserMiddleware()
             .UseHttpsRedirection();
 
         // TODO: Middleware khác sẽ thêm sau
         // .UseAuthentication()
         // .UseAuthorization()
-        // .UseExceptionMiddleware()
     }
 
     /// <summary>
