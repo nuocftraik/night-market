@@ -55,4 +55,17 @@ public static class Startup
         builder.MapControllers();
         return builder;
     }
+
+    /// <summary>
+    /// Initialize databases (apply migrations + seed data)
+    /// </summary>
+    public static async Task InitializeDatabasesAsync(
+        this IServiceProvider services,
+        CancellationToken cancellationToken = default)
+    {
+        using var scope = services.CreateScope();
+
+        var initializer = scope.ServiceProvider.GetRequiredService<NightMarket.WebApi.Infrastructure.Persistence.Initialization.DatabaseInitializer>();
+        await initializer.InitializeAsync(cancellationToken);
+    }
 }

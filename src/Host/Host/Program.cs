@@ -62,6 +62,11 @@ try
         };
     });
 
+    // ⭐ Initialize database (apply migrations + seed data)
+    // TEMPORARY: Commenting out until Identity services are added (Phase 4)
+    // Otherwise EF Core design-time tools fail to build the service provider.
+    // await app.Services.InitializeDatabasesAsync();
+
     // 11. Use Infrastructure middleware
     app.UseInfrastructure(builder.Configuration);
 
