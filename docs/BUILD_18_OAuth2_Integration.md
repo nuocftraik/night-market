@@ -3,6 +3,14 @@
 > 📚 [Quay lại Mục lục](BUILD_INDEX.md)  
 > 📋 **Prerequisites:** Bước 17 (Permission Authorization) đã hoàn thành
 
+> [!IMPORTANT]
+> **Implementation Notes (cập nhật sau khi implement):**
+> - **Namespace:** `NightMarket.WebApi.*` (không phải `ECO.WebApi.*`)
+> - **AuthenticationService:** Declared `internal class` (không phải `public class` như doc gốc) — consistent với pattern Infrastructure layer
+> - **OAuth2 Startup:** Chỉ register `Configure<GoogleAuthSettings>` và `Configure<FacebookAuthSettings>`, không add `.AddGoogle()/.AddFacebook()` middleware (token validation thực hiện manual trong service)
+> - **NuGet packages:** Dùng version `9.0.0` cho ASP.NET packages (match .NET 9), `Google.Apis.Auth 1.68.0`
+> - **appsettings.json:** Đã thêm placeholder config cho `Authentication:Google` và `Authentication:Facebook`
+
 Tài liệu này hướng dẫn xây dựng OAuth2 Integration - Social Login với Google và Facebook.
 
 ---
@@ -210,7 +218,7 @@ public async Task<IActionResult> GoogleLogin([FromBody] OAuthRequest request)
 **File:** `src/Infrastructure/Infrastructure/Auth/OAuth2/GoogleAuthSettings.cs`
 
 ```csharp
-namespace ECO.WebApi.Infrastructure.Auth.OAuth2;
+namespace NightMarket.WebApi.Infrastructure.Auth.OAuth2;
 
 /// <summary>
 /// Google OAuth2 authentication settings
@@ -262,7 +270,7 @@ public class GoogleAuthSettings
 **File:** `src/Infrastructure/Infrastructure/Auth/OAuth2/FacebookAuthSettings.cs`
 
 ```csharp
-namespace ECO.WebApi.Infrastructure.Auth.OAuth2;
+namespace NightMarket.WebApi.Infrastructure.Auth.OAuth2;
 
 /// <summary>
 /// Facebook OAuth2 authentication settings
@@ -318,7 +326,7 @@ public class FacebookAuthSettings
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ECO.WebApi.Infrastructure.Auth.OAuth2;
+namespace NightMarket.WebApi.Infrastructure.Auth.OAuth2;
 
 internal static class Startup
 {
@@ -441,9 +449,9 @@ internal static class Startup
 **File:** `src/Core/Application/Identity/O2Auth/IAuthenticationService.cs`
 
 ```csharp
-using ECO.WebApi.Application.Identity.Tokens;
+using NightMarket.WebApi.Application.Identity.Tokens;
 
-namespace ECO.WebApi.Application.Identity.O2Auth;
+namespace NightMarket.WebApi.Application.Identity.O2Auth;
 
 /// <summary>
 /// Authentication service cho OAuth2 social login
@@ -510,19 +518,19 @@ public interface IAuthenticationService : ITransientService
 **File:** `src/Infrastructure/Infrastructure/Identity/AuthenticationService.cs`
 
 ```csharp
-using ECO.WebApi.Application.Identity.O2Auth;
-using ECO.WebApi.Domain.Identity;
+using NightMarket.WebApi.Application.Identity.O2Auth;
+using NightMarket.WebApi.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Google.Apis.Auth;
-using ECO.WebApi.Infrastructure.Auth.OAuth2;
+using NightMarket.WebApi.Infrastructure.Auth.OAuth2;
 using Microsoft.Extensions.Options;
-using ECO.WebApi.Application.Identity.Tokens;
-using ECO.WebApi.Shared.Authorization;
+using NightMarket.WebApi.Application.Identity.Tokens;
+using NightMarket.Shared.Authorization;
 using Google.Apis.Auth.OAuth2.Flows;
 using Google.Apis.Auth.OAuth2;
-using ECO.WebApi.Application.Common.Interfaces;
+using NightMarket.WebApi.Application.Common.Interfaces;
 
-namespace ECO.WebApi.Infrastructure.Identity;
+namespace NightMarket.WebApi.Infrastructure.Identity;
 
 /// <summary>
 /// Authentication service implementation cho OAuth2 social login
@@ -586,7 +594,7 @@ public class AuthenticationService : IAuthenticationService
         await _userManager.CreateAsync(existingUser);
 
      // Gán role "Basic" cho user mới
-         await _userManager.AddToRoleAsync(existingUser, ECORoles.Basic);
+         await _userManager.AddToRoleAsync(existingUser, AppRoles.Basic);
  }
 
         // Note: Nếu user đã tồn tại nhưng email chưa link với Google account
@@ -659,7 +667,7 @@ public class AuthenticationService : IAuthenticationService
             };
 
             await _userManager.CreateAsync(existingUser);
-            await _userManager.AddToRoleAsync(existingUser, ECORoles.Basic);
+            await _userManager.AddToRoleAsync(existingUser, AppRoles.Basic);
    }
 
         // 6. Generate JWT token
@@ -706,7 +714,7 @@ public class GoogleUserInfo
 - Không cần gửi email xác nhận
 - User có thể login ngay
 
-**Why AddToRoleAsync(ECORoles.Basic):**
+**Why AddToRoleAsync(AppRoles.Basic):**
 - User mới được gán role "Basic" (không phải Admin)
 - Admin phải được tạo thủ công hoặc promote từ Basic
 
@@ -729,10 +737,10 @@ public class GoogleUserInfo
 **File:** `src/Host/Host/Controllers/Identity/AuthController.cs`
 
 ```csharp
-using ECO.WebApi.Application.Identity.O2Auth;
+using NightMarket.WebApi.Application.Identity.O2Auth;
 using NSwag.Annotations;
 
-namespace ECO.WebApi.Host.Controllers.Identity;
+namespace NightMarket.WebApi.Host.Controllers.Identity;
 
 /// <summary>
 /// Authentication controller cho OAuth2 social login
@@ -1035,8 +1043,8 @@ Content-Type: application/json
   "fullName": "John Doe",
   "permission": "Permissions.Dashboard.View",
   "exp": 1706529600,
-  "iss": "ECO.WebApi",
-  "aud": "ECO.WebApi"
+  "iss": "NightMarket.WebApi",
+  "aud": "NightMarket.WebApi"
 }
 ```
 
@@ -1165,7 +1173,7 @@ public async Task<TokenResponse> FacebookSignIn(string accessToken, string ipAdd
     };
 
     await _userManager.CreateAsync(existingUser);
-        await _userManager.AddToRoleAsync(existingUser, ECORoles.Basic);
+        await _userManager.AddToRoleAsync(existingUser, AppRoles.Basic);
     }
 
     // 4. Generate JWT token

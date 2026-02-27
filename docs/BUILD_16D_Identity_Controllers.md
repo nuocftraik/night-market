@@ -3,6 +3,16 @@
 > 📚 [Quay lại Mục lục](BUILD_INDEX.md)  
 > 📋 **Prerequisites:** Bước 16C (Function Service) đã hoàn thành
 
+> [!IMPORTANT]
+> **Implementation Notes (cập nhật sau khi implement):**
+> - **Namespace:** `NightMarket.WebApi.*` (không phải `ECO.WebApi.*`)
+> - **UsersController:** Hiện tại extends `ControllerBase` trực tiếp (chưa kế thừa `BaseApiController`), chưa có `[MustHavePermission]` và `[OpenApiOperation]` — sẽ thêm khi hoàn thiện authorization flow
+> - **RoleController:** Tương tự, inherits `ControllerBase`, chưa có permission attributes
+> - **PersonalController:** Inherits `BaseApiController`, đã có đầy đủ endpoints nhưng chưa có `[OpenApiOperation]`
+> - **TokensController:** Inherits `BaseApiController`, đã implement đầy đủ
+> - **Function ID type:** Sử dụng `string` thay vì `Guid` (consistent với các entity khác)
+> - **AuthenticationService:** Declared `internal class` (không phải `public class`)
+
 Tài liệu này hướng dẫn xây dựng Identity Controllers - REST API endpoints cho User, Role, Token và Personal management.
 
 ---
@@ -41,7 +51,7 @@ public Task<TokenResponse> GetTokenAsync(TokenRequest request)
 
 // UsersController - Get user by ID (Protected)
 [HttpGet("{id}")]
-[MustHavePermission(ECOAction.View, ECOFunction.User)]
+[MustHavePermission(AppAction.View, AppFunction.User)]
 public Task<UserDetailDto> GetByIdAsync(string id)
 {
     // Only users với "Users.View" permission
@@ -108,7 +118,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ECO.WebApi.Host.Controllers;
+namespace NightMarket.WebApi.Host.Controllers;
 
 /// <summary>
 /// Base API Controller với MediatR support
@@ -156,12 +166,12 @@ public class BaseApiController : ControllerBase
 **File:** `src/Host/Host/Controllers/Identity/TokensController.cs`
 
 ```csharp
-using ECO.WebApi.Application.Identity.Tokens;
+using NightMarket.WebApi.Application.Identity.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
 
-namespace ECO.WebApi.Host.Controllers.Identity;
+namespace NightMarket.WebApi.Host.Controllers.Identity;
 
 /// <summary>
 /// Tokens Controller - Authentication endpoints
@@ -258,15 +268,15 @@ private string? GetIpAddress() =>
 **File:** `src/Host/Host/Controllers/Identity/UsersController.cs`
 
 ```csharp
-using ECO.WebApi.Application.Identity.Users;
-using ECO.WebApi.Application.Identity.Users.Password;
-using ECO.WebApi.Infrastructure.Auth.Permissions;
-using ECO.WebApi.Shared.Authorization;
+using NightMarket.WebApi.Application.Identity.Users;
+using NightMarket.WebApi.Application.Identity.Users.Password;
+using NightMarket.WebApi.Infrastructure.Auth.Permissions;
+using NightMarket.Shared.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
 
-namespace ECO.WebApi.Host.Controllers.Identity;
+namespace NightMarket.WebApi.Host.Controllers.Identity;
 
 /// <summary>
 /// Users Controller - User management APIs
@@ -286,7 +296,7 @@ public class UsersController : BaseApiController
     /// Requires: Users.View permission
     /// </summary>
     [HttpGet("list")]
-    [MustHavePermission(ECOAction.View, ECOFunction.User)]
+    [MustHavePermission(AppAction.View, AppFunction.User)]
     [OpenApiOperation("Get list of all users.", "")]
     public Task<List<UserDetailDto>> GetListAsync(CancellationToken cancellationToken)
     {
@@ -298,7 +308,7 @@ public class UsersController : BaseApiController
     /// Requires: Users.View permission
     /// </summary>
     [HttpGet("{id}")]
-    [MustHavePermission(ECOAction.View, ECOFunction.User)]
+    [MustHavePermission(AppAction.View, AppFunction.User)]
     [OpenApiOperation("Get a user's details.", "")]
     public Task<UserDetailDto> GetByIdAsync(
   string id, 
@@ -312,7 +322,7 @@ public class UsersController : BaseApiController
     /// Requires: Users.View permission
     /// </summary>
 [HttpGet("{id}/roles")]
-    [MustHavePermission(ECOAction.View, ECOFunction.User)]
+    [MustHavePermission(AppAction.View, AppFunction.User)]
     [OpenApiOperation("Get a user's roles.", "")]
     public Task<List<UserRoleDto>> GetRolesAsync(
         string id, 
@@ -326,7 +336,7 @@ public class UsersController : BaseApiController
     /// Requires: Users.Update permission
     /// </summary>
     [HttpPost("{id}/roles")]
-    [MustHavePermission(ECOAction.Update, ECOFunction.User)]
+    [MustHavePermission(AppAction.Update, AppFunction.User)]
     [OpenApiOperation("Update a user's assigned roles.", "")]
     public Task<string> AssignRolesAsync(
    string id, 
@@ -341,7 +351,7 @@ public class UsersController : BaseApiController
     /// Requires: Users.Create permission
 /// </summary>
     [HttpPost("create")]
-[MustHavePermission(ECOAction.Create, ECOFunction.User)]
+[MustHavePermission(AppAction.Create, AppFunction.User)]
     [OpenApiOperation("Creates a new user.", "")]
     public Task<string> CreateAsync(CreateUserRequest request)
     {
@@ -370,7 +380,7 @@ public class UsersController : BaseApiController
     /// Requires: Users.Update permission
     /// </summary>
     [HttpPost("{id}/toggle-status")]
-    [MustHavePermission(ECOAction.Update, ECOFunction.User)]
+    [MustHavePermission(AppAction.Update, AppFunction.User)]
     [OpenApiOperation("Toggle a user's active status.", "")]
     public async Task<ActionResult> ToggleStatusAsync(
         string id, 
@@ -484,13 +494,13 @@ public class UsersController : BaseApiController
 **File:** `src/Host/Host/Controllers/Identity/RoleController.cs`
 
 ```csharp
-using ECO.WebApi.Application.Identity.Roles;
-using ECO.WebApi.Infrastructure.Auth.Permissions;
-using ECO.WebApi.Shared.Authorization;
+using NightMarket.WebApi.Application.Identity.Roles;
+using NightMarket.WebApi.Infrastructure.Auth.Permissions;
+using NightMarket.Shared.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
 
-namespace ECO.WebApi.Host.Controllers.Identity;
+namespace NightMarket.WebApi.Host.Controllers.Identity;
 
 /// <summary>
 /// Role Controller - Role and Function management APIs
@@ -516,7 +526,7 @@ public class RoleController : BaseApiController
     /// Requires: Roles.View permission
     /// </summary>
     [HttpGet]
-    [MustHavePermission(ECOAction.View, ECOFunction.Role)]
+    [MustHavePermission(AppAction.View, AppFunction.Role)]
     [OpenApiOperation("Get a list of all roles.", "")]
     public Task<List<RoleDto>> GetListAsync(CancellationToken cancellationToken)
     {
@@ -528,7 +538,7 @@ public class RoleController : BaseApiController
     /// Requires: Roles.View permission
     /// </summary>
     [HttpGet("{id}")]
-    [MustHavePermission(ECOAction.View, ECOFunction.Role)]
+    [MustHavePermission(AppAction.View, AppFunction.Role)]
   [OpenApiOperation("Get role details.", "")]
     public Task<RoleDto> GetByIdAsync(string id)
     {
@@ -540,7 +550,7 @@ public class RoleController : BaseApiController
 /// Requires: Roles.View permission
     /// </summary>
     [HttpGet("{id}/permissions")]
-    [MustHavePermission(ECOAction.View, ECOFunction.Role)]
+    [MustHavePermission(AppAction.View, AppFunction.Role)]
     [OpenApiOperation("Get role details with its permissions.", "")]
   public Task<List<FunctionDto>> GetByIdWithPermissionsAsync(
         string id, 
@@ -554,7 +564,7 @@ public class RoleController : BaseApiController
     /// Requires: Roles.Update permission
     /// </summary>
     [HttpPut("{id}/permissions")]
-    [MustHavePermission(ECOAction.Update, ECOFunction.Role)]
+    [MustHavePermission(AppAction.Update, AppFunction.Role)]
     [OpenApiOperation("Update a role's permissions.", "")]
     public async Task<ActionResult> UpdatePermissionsAsync(
         string id, 
@@ -576,7 +586,7 @@ public class RoleController : BaseApiController
     /// Requires: Roles.Create hoặc Roles.Update permission
     /// </summary>
     [HttpPost("create/update")]
-    [MustHavePermission(ECOAction.Create, ECOFunction.Role)]
+    [MustHavePermission(AppAction.Create, AppFunction.Role)]
     [OpenApiOperation("Create or update a role.", "")]
     public async Task<ActionResult> RegisterRoleAsync(CreateOrUpdateRoleRequest request)
     {
@@ -589,7 +599,7 @@ public class RoleController : BaseApiController
     /// Requires: Roles.Delete permission
     /// </summary>
     [HttpDelete("{id}")]
-    [MustHavePermission(ECOAction.Delete, ECOFunction.Role)]
+    [MustHavePermission(AppAction.Delete, AppFunction.Role)]
     [OpenApiOperation("Delete a role.", "")]
     public async Task<ActionResult> DeleteAsync(string id)
     {
@@ -606,7 +616,7 @@ public class RoleController : BaseApiController
     /// Requires: Functions.View permission
     /// </summary>
     [HttpGet("functions")]
-    [MustHavePermission(ECOAction.View, ECOFunction.Role)]
+    [MustHavePermission(AppAction.View, AppFunction.Role)]
     [OpenApiOperation("Get a list of all functions.", "")]
     public Task<List<FunctionDto>> GetFunctionListAsync(
  CancellationToken cancellationToken)
@@ -619,9 +629,9 @@ public class RoleController : BaseApiController
     /// Requires: Functions.View permission
     /// </summary>
     [HttpGet("function/{id}")]
-    [MustHavePermission(ECOAction.View, ECOFunction.Role)]
+    [MustHavePermission(AppAction.View, AppFunction.Role)]
     [OpenApiOperation("Get function details.", "")]
-    public Task<FunctionDto> GetFunctionByIdAsync(Guid id)
+    public Task<FunctionDto> GetFunctionByIdAsync(string id)
     {
         return _functionService.GetByIdAsync(id);
     }
@@ -631,7 +641,7 @@ public class RoleController : BaseApiController
  /// Requires: Functions.Create permission
     /// </summary>
     [HttpPost("function/create/update")]
-    [MustHavePermission(ECOAction.Create, ECOFunction.Role)]
+    [MustHavePermission(AppAction.Create, AppFunction.Role)]
     [OpenApiOperation("Create or update a function.", "")]
     public async Task<ActionResult> CreateUpdateFunctionAsync(
         CreateOrUpdateFunctionRequest request)
@@ -645,9 +655,9 @@ public class RoleController : BaseApiController
     /// Requires: Functions.Delete permission
     /// </summary>
     [HttpDelete("function/{id}")]
-    [MustHavePermission(ECOAction.Delete, ECOFunction.Role)]
+    [MustHavePermission(AppAction.Delete, AppFunction.Role)]
     [OpenApiOperation("Delete a function.", "")]
-    public async Task<ActionResult> DeleteFunctionAsync(Guid id)
+    public async Task<ActionResult> DeleteFunctionAsync(string id)
     {
         var result = await _functionService.DeleteAsync(id);
         return Ok(new { message = result });
@@ -693,14 +703,14 @@ public class RoleController : BaseApiController
 **File:** `src/Host/Host/Controllers/Personal/PersonalController.cs`
 
 ```csharp
-using ECO.WebApi.Application.Auditing;
-using ECO.WebApi.Application.Identity.Users;
-using ECO.WebApi.Application.Identity.Users.Password;
+using NightMarket.WebApi.Application.Auditing;
+using NightMarket.WebApi.Application.Identity.Users;
+using NightMarket.WebApi.Application.Identity.Users.Password;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
 using System.Security.Claims;
 
-namespace ECO.WebApi.Host.Controllers.Personal;
+namespace NightMarket.WebApi.Host.Controllers.Personal;
 
 /// <summary>
 /// Personal Controller - Current user profile management
@@ -844,7 +854,7 @@ public class PersonalController : BaseApiController
 ```csharp
 using System.Security.Claims;
 
-namespace ECO.WebApi.Shared.Authorization;
+namespace NightMarket.Shared.Authorization;
 
 /// <summary>
 /// ClaimsPrincipal extension methods
@@ -872,20 +882,20 @@ public static class ClaimsPrincipalExtensions
 
     /// <summary>
     /// Lấy full name từ JWT claims
-    /// Claim name: ECOClaims.Fullname
+    /// Claim name: AppClaims.Fullname
   /// </summary>
     public static string? GetFullName(this ClaimsPrincipal principal)
     {
-    return principal.FindFirstValue(ECOClaims.Fullname);
+    return principal.FindFirstValue(AppClaims.Fullname);
     }
 
     /// <summary>
     /// Lấy image URL từ JWT claims
-    /// Claim name: ECOClaims.ImageUrl
+    /// Claim name: AppClaims.ImageUrl
     /// </summary>
     public static string? GetImageUrl(this ClaimsPrincipal principal)
 {
-        return principal.FindFirstValue(ECOClaims.ImageUrl);
+        return principal.FindFirstValue(AppClaims.ImageUrl);
     }
 
     /// <summary>
@@ -911,7 +921,7 @@ public static class ClaimsPrincipalExtensions
     public static bool HasPermission(this ClaimsPrincipal principal, string permission)
     {
         return principal.Claims
-    .Any(c => c.Type == ECOClaims.Permission && c.Value == permission);
+    .Any(c => c.Type == AppClaims.Permission && c.Value == permission);
     }
 }
 ```
@@ -1015,7 +1025,7 @@ GET /api/role
 ```json
 {
   "info": {
-    "name": "ECO.WebApi Identity APIs",
+    "name": "NightMarket.WebApi Identity APIs",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
