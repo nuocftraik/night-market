@@ -561,20 +561,14 @@ src/Migrators/Migrators.MSSQL/Migrations/
 using ECO.WebApi.Application;
 using ECO.WebApi.Host.Configurations;
 using ECO.WebApi.Infrastructure;
-using ECO.WebApi.Infrastructure.Logging;
-using Serilog;
 
-// Initialize logging
-StaticLogger.EnsureInitialized();
-Log.Information("Server Booting Up...");
-
+// 1. Load configurations
 try
 {
     var builder = WebApplication.CreateBuilder(args);
 
     // Load configurations
     builder.AddConfigurations();
-    builder.RegisterSerilog();
 
     // Add services
     builder.Services.AddControllers();
@@ -596,19 +590,12 @@ Description = "E-Commerce API built with Clean Architecture"
     // Build
     var app = builder.Build();
 
-    Log.Information("Application built successfully");
-
     // Configure middleware
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
     app.UseSwaggerUI();
     }
-
-    app.UseSerilogRequestLogging(options =>
-    {
-        options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
-    });
 
     // ⭐ Initialize database (apply migrations + seed data)
     await app.Services.InitializeDatabasesAsync();
@@ -618,20 +605,11 @@ Description = "E-Commerce API built with Clean Architecture"
     app.MapEndpoints();
 
     // Run
- Log.Information("Application Starting...");
-    Log.Information("Listening on: {Addresses}", string.Join(", ", app.Urls));
     app.Run();
 }
 catch (Exception ex) when (!ex.GetType().Name.Equals("HostAbortedException", StringComparison.Ordinal))
 {
-    StaticLogger.EnsureInitialized();
-    Log.Fatal(ex, "Unhandled exception occurred during application startup");
-}
-finally
-{
-    StaticLogger.EnsureInitialized();
-    Log.Information("Server Shutting down...");
-    Log.CloseAndFlush();
+    // Log exception
 }
 ```
 

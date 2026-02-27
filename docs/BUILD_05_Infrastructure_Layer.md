@@ -62,16 +62,11 @@ Tài liệu này hướng dẫn xây dựng Infrastructure Layer - chứa implem
 		<PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="8.0.0" />
 	</ItemGroup>
 
-	<!-- Other Core Packages -->
-	<ItemGroup>
+		<!-- Other Core Packages -->
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
-		
-		<!-- Serilog: Thêm trước cho Persistence Startup -->
-		<PackageReference Include="Serilog" Version="3.1.1" />
-		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
 	</ItemGroup>
 </Project>
 ```
@@ -80,7 +75,6 @@ Tài liệu này hướng dẫn xây dựng Infrastructure Layer - chứa implem
 - `Microsoft.AspNetCore.App` - Cần thiết cho các ASP.NET Core types (như `ILoggingBuilder`) dùng trong Infrastructure.
 - `EntityFrameworkCore.SqlServer` - Database provider cho SQL Server
 - `EntityFrameworkCore.Tools` - Cho migrations (Add-Migration, Update-Database)
-- `Serilog` - Framework logging. Được thêm trước ở Phase 1 để code Bootstrap compiling thành công. Sẽ setup JSON config đầy đủ ở BUILD_07.
 
 **Lưu ý:** Các packages khác (Hangfire, MailKit...) sẽ được thêm ở các bước sau khi implement từng module cụ thể.
 
@@ -389,15 +383,12 @@ internal static class Startup
 
         // Register DbContext
         return services
-   .AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
-        {
-      var databaseSettings = serviceProvider
-.GetRequiredService<IOptions<DatabaseSettings>>().Value;
-      
-     _logger.Information("Current DB Provider: {dbProvider}", 
-        databaseSettings.DBProvider);
+            .AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+            {
+                var databaseSettings = serviceProvider
+                    .GetRequiredService<IOptions<DatabaseSettings>>().Value;
 
-    // Configure database provider
+                // Configure database provider
    options.UseDatabase(
         databaseSettings.DBProvider, 
          databaseSettings.ConnectionString);
@@ -552,19 +543,6 @@ dotnet list src/Infrastructure/Infrastructure/Infrastructure.csproj reference
 ---
 
 ## 7. Common Issues
-
-### Issue 1: "Build failed due to missing Serilog"
-
-**Nguyên nhân:** Persistence/Startup.cs sử dụng Serilog nhưng chưa add package.
-
-**Giải pháp:** 
-```xml
-<PackageReference Include="Serilog" Version="3.1.1" />
-```
-
-**Hoặc:** Tạm thời comment Log.ForContext, sẽ setup Serilog đầy đủ ở BUILD_06.
-
----
 
 ### Issue 2: "DbContext requires ICurrentUser"
 
